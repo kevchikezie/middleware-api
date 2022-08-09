@@ -25,4 +25,6 @@ $router->group(['prefix' => '/api/v1'], function () use ($router) {
             'version' => '1.0.0'
         ], 200);
     });
+
+    $router->get('/institutions', 'InstitutionController@search');
 });
