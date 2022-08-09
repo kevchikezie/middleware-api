@@ -40,8 +40,10 @@ class InstitutionController extends Controller
             ]);
         }
 
+        $token = $request->header('Authorization');
+
         $headers = [
-            'Authorization' => "Bearer $request->authorization",
+            'Authorization' => $token,
             'Content-Type' => 'application/ld+json',
             'Accept' => 'application/ld+json',
         ];
@@ -49,7 +51,7 @@ class InstitutionController extends Controller
         $searchString = strip_tags($request->query('fullSearch'));
 
         $url = $this->baseUrl . '/institutions?fullSearch=' . $searchString;
-        
+
         $response = Http::withHeaders($headers)->get($url);
 
         $body = json_decode($response->body(), true);
@@ -58,6 +60,8 @@ class InstitutionController extends Controller
             Log::error(json_encode($response));
             return response()->json($body);
         }
+
+        return $body;
     }
     
 }

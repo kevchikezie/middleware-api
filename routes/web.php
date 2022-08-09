@@ -26,5 +26,8 @@ $router->group(['prefix' => '/api/v1'], function () use ($router) {
         ], 200);
     });
 
-    $router->get('/institutions', 'InstitutionController@search');
+        
+    $router->group(['middleware' => ['auth']], function () use ($router) {
+        $router->get('/institutions', 'InstitutionController@search');
+    });
 });

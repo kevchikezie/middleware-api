@@ -36,7 +36,12 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+            if (is_null($request->header('Authorization'))) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Bearer token not found!'
+                ], 401);
+            }
         }
 
         return $next($request);
