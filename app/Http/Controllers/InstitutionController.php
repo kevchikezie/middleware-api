@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -57,11 +58,38 @@ class InstitutionController extends Controller
         $body = json_decode($response->body(), true);
 
         if ($response->status() != 200) {
-            Log::error(json_encode($response));
+            $this->createTicket($searchString, $token);
+
             return response()->json($body);
         }
 
         return $body;
+    }
+
+    /**
+     * Create ticket if an institution does not exist
+     * 
+     * @param  string  $searchString
+     * @param  string  $token
+     * @return null
+     */
+    private function createTicket($searchString, $token)
+    {
+        $headers = [
+            'Authorization' => $token,
+            'Content-Type' => 'application/ld+json',
+            'Accept' => 'application/ld+json',
+        ];
+
+        $url = $this->baseUrl . '/tickets';
+
+        $response = Http::withHeaders($headers)->get($url, [
+            'project' => "projects/2a9caad1-19c7-4340-949f-30b81a8a043e",
+            'title' => 'missing Institution ' . $searchString,
+            'description' => 'add Institution ' . $searchString,
+            'createdAt' => Carbon::now(),
+            'updatedAt' => Carbon::now(),
+        ]);
     }
     
 }
