@@ -14,5 +14,20 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return redirect('/api/v1');
+});
+
+$router->group(['prefix' => '/api/v1'], function () use ($router) {
+    $router->get('/', function () use ($router) {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'API is running',
+            'version' => '1.0.0'
+        ], 200);
+    });
+
+        
+    $router->group(['middleware' => ['auth']], function () use ($router) {
+        $router->get('/institutions', 'InstitutionController@search');
+    });
 });
